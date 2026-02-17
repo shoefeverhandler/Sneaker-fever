@@ -6,14 +6,15 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { ArrowRight, Sparkles, Send, Star } from 'lucide-react';
+import { ArrowRight, Sparkles, Send, Star, ShieldCheck, RotateCcw, Lock, Award } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-const collections = [
-  { id: 'running', title: 'Running', subtitle: '42 Products', image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=1000' },
-  { id: 'basketball', title: 'Basketball', subtitle: '28 Products', image: 'https://images.unsplash.com/photo-1518002171953-a080ee321e2f?auto=format&fit=crop&q=80&w=1000' },
-  { id: 'casual', title: 'Casual', subtitle: '56 Products', image: 'https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&q=80&w=1000' },
+const features = [
+  { icon: ShieldCheck, title: 'Authentic Products', description: '100% genuine sneakers sourced directly from brands. Every pair is verified.' },
+  { icon: RotateCcw, title: 'Easy Returns', description: 'Not the right fit? Return within 14 days, no questions asked.' },
+  { icon: Lock, title: 'Secure Payments', description: 'Your transactions are protected with industry-leading encryption.' },
+  { icon: Award, title: 'Premium Quality', description: 'Handpicked selection of the finest sneakers from top global brands.' },
 ];
 
 const newArrivals = [
@@ -119,7 +120,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured Collections */}
+      {/* Why Choose Us */}
       <section className="py-24">
         <div className="container mx-auto px-4">
           <motion.div
@@ -128,41 +129,31 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <p className="text-sm font-semibold tracking-widest text-muted-foreground uppercase mb-3">Shop by style</p>
+            <p className="text-sm font-semibold tracking-widest text-muted-foreground uppercase mb-3">The Sneaker Fever promise</p>
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
-              Curated Collections
+              Why Choose Us
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {collections.map((collection, i) => (
-              <Link key={collection.id} href={`/shop?category=${collection.id}`}>
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                >
-                  <Card className="overflow-hidden group cursor-pointer border-0 shadow-none hover-lift">
-                    <div className="relative h-[420px] overflow-hidden rounded-xl">
-                      <Image
-                        src={collection.image}
-                        alt={collection.title}
-                        fill
-                        className="object-cover transition-transform duration-700 group-hover:scale-110"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-                      <div className="absolute bottom-0 left-0 right-0 p-8">
-                        <p className="text-white/70 text-sm font-medium mb-1">{collection.subtitle}</p>
-                        <h3 className="text-3xl font-bold text-white mb-3">{collection.title}</h3>
-                        <span className="inline-flex items-center gap-1 text-white/80 text-sm font-medium group-hover:gap-2 transition-all">
-                          Shop Now <ArrowRight className="h-4 w-4" />
-                        </span>
-                      </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {features.map((feature, i) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <Card className="h-full border bg-card hover-lift transition-shadow hover:shadow-lg">
+                  <CardContent className="p-8 text-center">
+                    <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 mb-6">
+                      <feature.icon className="w-7 h-7 text-primary" />
                     </div>
-                  </Card>
-                </motion.div>
-              </Link>
+                    <h3 className="text-lg font-bold mb-2">{feature.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
           </div>
         </div>
