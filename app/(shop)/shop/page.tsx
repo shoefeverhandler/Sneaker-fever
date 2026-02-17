@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { Slider } from '@/components/ui/slider';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -125,7 +125,7 @@ function FilterSidebar({
     );
 }
 
-export default function Shop() {
+function ShopContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
 
@@ -357,5 +357,13 @@ export default function Shop() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function Shop() {
+    return (
+        <Suspense fallback={<div className="container py-20 text-center">Loading Shop...</div>}>
+            <ShopContent />
+        </Suspense>
     );
 }
