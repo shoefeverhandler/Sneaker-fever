@@ -6,9 +6,10 @@ import { trackByAWB, trackByOrderId, isShiprocketConfigured } from '@/lib/shipro
 
 export async function GET(
     req: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const { id } = await params;
         const { userId } = await auth();
         if (!userId) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -23,7 +24,7 @@ export async function GET(
 
         await dbConnect();
 
-        const order = await Order.findOne({ _id: params.id, userId });
+        const order = await Order.findOne({ _id: id, userId });
         if (!order) {
             return NextResponse.json({ error: 'Order not found' }, { status: 404 });
         }
