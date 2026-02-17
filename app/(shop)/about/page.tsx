@@ -32,8 +32,6 @@ const values = [
 
 const stats = [
     { value: '10K+', label: 'Happy Customers' },
-    { value: '500+', label: 'Products' },
-    { value: '15+', label: 'Brand Partners' },
     { value: '99%', label: 'Satisfaction Rate' },
 ];
 
@@ -76,7 +74,7 @@ export default function AboutPage() {
             {/* Stats Strip */}
             <section className="bg-foreground text-background py-10">
                 <div className="container mx-auto px-4">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                    <div className="grid grid-cols-2 gap-8 text-center max-w-3xl mx-auto">
                         {stats.map((stat) => (
                             <motion.div
                                 key={stat.label}

@@ -1,5 +1,4 @@
-'use client';
-
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { fadeInUp, staggerContainer } from '@/lib/animations';
 import { Button } from '@/components/ui/button';
@@ -9,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { ArrowRight, Sparkles, Send, Star, ShieldCheck, RotateCcw, Lock, Award } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { getNewArrivals, urlFor, type SanityProduct } from '@/lib/sanity';
 
 const features = [
   { icon: ShieldCheck, title: 'Authentic Products', description: '100% genuine sneakers sourced directly from brands. Every pair is verified.' },
@@ -17,16 +17,18 @@ const features = [
   { icon: Award, title: 'Premium Quality', description: 'Handpicked selection of the finest sneakers from top global brands.' },
 ];
 
-const newArrivals = [
-  { id: '1', title: 'Nike Air Max 90', price: 12999, compareAt: 15999, brand: 'Nike', isNew: true, image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=800' },
-  { id: '2', title: 'Adidas Ultraboost', price: 16999, brand: 'Adidas', isNew: true, image: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&q=80&w=800' },
-  { id: '3', title: 'Puma RS-X', price: 9999, brand: 'Puma', isNew: false, image: 'https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&q=80&w=800' },
-  { id: '4', title: 'New Balance 550', price: 11999, compareAt: 14999, brand: 'New Balance', isNew: true, image: 'https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&q=80&w=800' },
-];
-
 const brandLogos = ['Nike', 'Adidas', 'Puma', 'New Balance', 'Reebok', 'Converse', 'Vans', 'Jordan'];
 
 export default function Home() {
+  const [newArrivals, setNewArrivals] = useState<SanityProduct[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getNewArrivals().then((data) => {
+      setNewArrivals(data);
+      setLoading(false);
+    });
+  }, []);
   return (
     <div className="overflow-hidden">
       {/* Hero Section — Full-bleed cinematic */}
@@ -173,31 +175,39 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {newArrivals.map((product, i) => (
+            {loading ? (
+              [1, 2, 3, 4].map(i => (
+                <div key={i} className="aspect-square bg-accent animate-pulse rounded-xl" />
+              ))
+            ) : newArrivals.map((product, i) => (
               <motion.div
-                key={product.id}
+                key={product._id}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
               >
-                <Link href={`/product/${product.id}`} className="group">
+                <Link href={`/product/${product.slug}`} className="group">
                   <Card className="overflow-hidden border-0 shadow-none hover-lift bg-transparent">
                     <div className="relative aspect-square bg-card rounded-xl overflow-hidden mb-4">
-                      <Image
-                        src={product.image}
-                        alt={product.title}
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
+                      {product.images?.[0] ? (
+                        <Image
+                          src={urlFor(product.images[0]).url()}
+                          alt={product.title}
+                          fill
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-accent flex items-center justify-center">No Image</div>
+                      )}
                       {product.isNew && (
                         <Badge className="absolute top-3 left-3 rounded-full text-[10px] font-semibold">
                           New
                         </Badge>
                       )}
-                      {product.compareAt && (
+                      {product.compareAtPrice && (
                         <Badge variant="destructive" className="absolute top-3 right-3 rounded-full text-[10px] font-semibold">
-                          -{Math.round(((product.compareAt - product.price) / product.compareAt) * 100)}%
+                          -{Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)}%
                         </Badge>
                       )}
                     </div>
@@ -206,8 +216,8 @@ export default function Home() {
                       <h3 className="font-semibold text-sm">{product.title}</h3>
                       <div className="flex items-center gap-2">
                         <p className="font-bold text-sm">₹{product.price.toLocaleString()}</p>
-                        {product.compareAt && (
-                          <p className="text-xs text-muted-foreground line-through">₹{product.compareAt.toLocaleString()}</p>
+                        {product.compareAtPrice && (
+                          <p className="text-xs text-muted-foreground line-through">₹{product.compareAtPrice.toLocaleString()}</p>
                         )}
                       </div>
                     </CardContent>

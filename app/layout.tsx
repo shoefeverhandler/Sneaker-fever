@@ -13,8 +13,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Sneaker Fever",
-  description: "Premium Footwear Collection",
+  title: {
+    default: "Sneaker Fever",
+    template: "%s | Sneaker Fever",
+  },
+  description: "Premium Footwear Collection - Where Style Meets Comfort",
+  icons: {
+    icon: '/icon.png',
+  },
 };
 
 export default function RootLayout({
