@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import { useWishlist } from '@/stores/useWishlist';
 import { getProductsByIds, urlFor, type SanityProduct } from '@/lib/sanity';
