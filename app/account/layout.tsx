@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { UserButton, useUser } from '@clerk/nextjs';
+import { ClerkProvider, UserButton, useUser } from '@clerk/nextjs';
 import { LayoutDashboard, ShoppingBag, Heart, Settings, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
@@ -11,10 +11,9 @@ const sidebarItems = [
     { icon: LayoutDashboard, label: 'Dashboard', href: '/account' },
     { icon: ShoppingBag, label: 'Orders', href: '/account/orders' },
     { icon: Heart, label: 'Wishlist', href: '/account/wishlist' },
-    // { icon: Settings, label: 'Settings', href: '/account/settings' }, // Optional for now
 ];
 
-export default function AccountLayout({ children }: { children: React.ReactNode }) {
+function AccountContent({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const { user, isLoaded } = useUser();
 
@@ -71,5 +70,13 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function AccountLayout({ children }: { children: React.ReactNode }) {
+    return (
+        <ClerkProvider>
+            <AccountContent>{children}</AccountContent>
+        </ClerkProvider>
     );
 }
