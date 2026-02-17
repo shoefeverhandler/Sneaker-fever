@@ -241,21 +241,14 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                         </Button>
                     </div>
 
-                    {/* Trust Badges */}
-                    <div className="grid grid-cols-2 gap-3">
-                        {[
-                            { icon: RotateCcw, label: 'Free Returns', sub: '30-day policy' },
-                            { icon: ShieldCheck, label: 'Warranty', sub: '2-year coverage' },
-                        ].map((badge) => (
-                            <Card key={badge.label} className="border bg-accent/50">
-                                <CardContent className="p-4 text-center space-y-1">
-                                    <badge.icon className="h-5 w-5 mx-auto text-muted-foreground" />
-                                    <p className="text-xs font-semibold">{badge.label}</p>
-                                    <p className="text-[10px] text-muted-foreground">{badge.sub}</p>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
+                    {/* Trust Badge */}
+                    <Card className="border bg-accent/50">
+                        <CardContent className="p-4 text-center space-y-1">
+                            <RotateCcw className="h-5 w-5 mx-auto text-muted-foreground" />
+                            <p className="text-xs font-semibold">Free Returns</p>
+                            <p className="text-[10px] text-muted-foreground">7-day policy</p>
+                        </CardContent>
+                    </Card>
 
                     {/* Details Accordion */}
                     <Accordion type="single" collapsible className="w-full">
@@ -275,11 +268,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                                 <div className="space-y-3 text-sm text-muted-foreground">
                                     <div className="flex items-center gap-3">
                                         <RotateCcw className="h-4 w-4 shrink-0" />
-                                        <span>Free 30-day returns</span>
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <ShieldCheck className="h-4 w-4 shrink-0" />
-                                        <span>2-year warranty</span>
+                                        <span>Free 7-day returns</span>
                                     </div>
                                 </div>
                             </AccordionContent>

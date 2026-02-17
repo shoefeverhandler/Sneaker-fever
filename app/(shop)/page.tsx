@@ -12,7 +12,7 @@ import Image from 'next/image';
 
 const features = [
   { icon: ShieldCheck, title: 'Authentic Products', description: '100% genuine sneakers sourced directly from brands. Every pair is verified.' },
-  { icon: RotateCcw, title: 'Easy Returns', description: 'Not the right fit? Return within 14 days, no questions asked.' },
+  { icon: RotateCcw, title: 'Easy Returns', description: 'Not the right fit? Return within 7 days, no questions asked.' },
   { icon: Lock, title: 'Secure Payments', description: 'Your transactions are protected with industry-leading encryption.' },
   { icon: Award, title: 'Premium Quality', description: 'Handpicked selection of the finest sneakers from top global brands.' },
 ];
