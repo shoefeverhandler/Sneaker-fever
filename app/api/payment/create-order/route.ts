@@ -9,7 +9,7 @@ function getRazorpayInstance() {
     const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
 
-    if (!keyId || !keySecret || keyId.startsWith('rzp_test_...')) {
+    if (!keyId || !keySecret) {
         return null;
     }
 
