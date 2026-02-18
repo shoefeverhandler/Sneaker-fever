@@ -25,9 +25,6 @@ interface CartStore {
     closeCart: () => void;
 
     toggleCart: () => void;
-
-    get count(): number;
-    get totalPrice(): number;
 }
 
 export const useCart = create<CartStore>()(
@@ -71,13 +68,8 @@ export const useCart = create<CartStore>()(
             closeCart: () => set({ isOpen: false }),
             toggleCart: () => set({ isOpen: !get().isOpen }),
 
-            get count() {
-                return get().items.reduce((total, item) => total + item.quantity, 0);
-            },
-
-            get totalPrice() {
-                return get().items.reduce((total, item) => total + (Number(item.price) * item.quantity), 0);
-            },
+            // Removed getters to avoid hydration issues. 
+            // Calculate totals in components instead.
         }),
         {
             name: 'cart-storage',

@@ -10,7 +10,8 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function CartDrawer() {
-    const { items, isOpen, closeCart, updateQuantity, removeItem, totalPrice } = useCart();
+    const { items, isOpen, closeCart, updateQuantity, removeItem } = useCart();
+    const totalPrice = items.reduce((total, item) => total + (Number(item.price) * item.quantity), 0);
 
     return (
         <Sheet open={isOpen} onOpenChange={(open) => !open && closeCart()}>
