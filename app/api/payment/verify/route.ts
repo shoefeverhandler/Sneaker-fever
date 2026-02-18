@@ -48,6 +48,7 @@ export async function POST(req: Request) {
             items: orderDetails.items,
             shippingAddress: orderDetails.shippingAddress,
             totalAmount: orderDetails.totalAmount,
+            shippingCost: orderDetails.shippingCost || 0,
             paymentId: razorpay_payment_id,
             paymentStatus: 'completed',
             orderStatus: 'processing',

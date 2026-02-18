@@ -33,10 +33,7 @@ export default function ShippingPage() {
                     Sneaker Fever is not responsible for any customs and taxes applied to your order. All fees imposed during or after shipping are the responsibility of the customer (tariffs, taxes, etc.).
                 </p>
 
-                <h2 className="text-xl font-semibold text-foreground">5. Damages</h2>
-                <p>
-                    Sneaker Fever is not liable for any products damaged or lost during shipping. If you received your order damaged, please contact the shipment carrier to file a claim.
-                </p>
+
             </div>
         </div>
     );

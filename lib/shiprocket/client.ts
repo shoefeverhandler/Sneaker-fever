@@ -111,6 +111,25 @@ export interface CreateOrderPayload {
     weight: number; // kg
 }
 
+export interface CreateReturnOrderPayload {
+    order_id: string; // The original forward order ID
+    order_date: string;
+    pickup_customer_name: string;
+    pickup_address: string;
+    pickup_city: string;
+    pickup_pincode: string;
+    pickup_state: string;
+    pickup_phone: string;
+    pickup_email: string;
+    order_items: ShiprocketOrderItem[];
+    payment_method: 'Prepaid'; // Returns are usually prepaid/refunded later
+    sub_total: number;
+    length: number;
+    breadth: number;
+    height: number;
+    weight: number;
+}
+
 export interface CreateOrderResponse {
     order_id: number;
     shipment_id: number;
@@ -120,6 +139,12 @@ export interface CreateOrderResponse {
     awb_code: string;
     courier_company_id: string;
     courier_name: string;
+}
+
+export interface CreateReturnOrderResponse {
+    order_id: number; // The new Return Order ID
+    shipment_id: number;
+    status: string;
 }
 
 export interface TrackingActivity {
@@ -158,6 +183,22 @@ export async function createShiprocketOrder(
     return shiprocketFetch('/orders/create/adhoc', {
         method: 'POST',
         body: JSON.stringify(payload),
+    });
+}
+
+/**
+ * Create a Return Order in Shiprocket.
+ */
+export async function createReturnOrder(
+    payload: CreateReturnOrderPayload
+): Promise<CreateReturnOrderResponse> {
+    const body = {
+        ...payload,
+        channel_id: process.env.SHIPROCKET_CHANNEL_ID || '', // Optional if not using channel integration
+    };
+    return shiprocketFetch('/orders/create/return', {
+        method: 'POST',
+        body: JSON.stringify(body),
     });
 }
 

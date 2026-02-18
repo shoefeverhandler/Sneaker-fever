@@ -20,6 +20,7 @@ export interface IOrder {
         phone: string;
     };
     totalAmount: number;
+    shippingCost?: number;
     paymentId: string;
     paymentStatus: 'pending' | 'completed' | 'failed';
     orderStatus: 'processing' | 'shipped' | 'in_transit' | 'out_for_delivery' | 'delivered' | 'cancelled' | 'rto';
@@ -29,6 +30,10 @@ export interface IOrder {
     awbCode?: string;
     courierName?: string;
     trackingUrl?: string;
+    // Returns
+    returnStatus?: 'none' | 'requested' | 'approved' | 'rejected' | 'completed';
+    returnReason?: string;
+    returnShiprocketOrderId?: number;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -56,6 +61,7 @@ const OrderSchema = new Schema<IOrder>(
             phone: { type: String, required: true },
         },
         totalAmount: { type: Number, required: true },
+        shippingCost: { type: Number, default: 0 },
         paymentId: { type: String, required: true },
         paymentStatus: {
             type: String,
@@ -73,6 +79,14 @@ const OrderSchema = new Schema<IOrder>(
         awbCode: { type: String },
         courierName: { type: String },
         trackingUrl: { type: String },
+        // Returns
+        returnStatus: {
+            type: String,
+            enum: ['none', 'requested', 'approved', 'rejected', 'completed'],
+            default: 'none',
+        },
+        returnReason: { type: String },
+        returnShiprocketOrderId: { type: Number },
     },
     { timestamps: true }
 );

@@ -45,7 +45,7 @@ export default function WishlistPage() {
                     <Heart className="w-16 h-16 mx-auto mb-4 opacity-50" />
                     <p className="text-lg">Your wishlist is empty.</p>
                     <Link href="/shop" className="mt-4 inline-block">
-                        <Button variant="outline">Explore Collections</Button>
+                        <Button variant="outline">Start Shopping</Button>
                     </Link>
                 </div>
             ) : (

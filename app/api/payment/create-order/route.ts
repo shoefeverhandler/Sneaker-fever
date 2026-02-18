@@ -29,7 +29,7 @@ export async function POST(req: Request) {
             );
         }
 
-        const { amount } = await req.json();
+        const { amount, notes } = await req.json();
 
         if (!amount) {
             return NextResponse.json({ error: 'Amount is required' }, { status: 400 });
@@ -39,6 +39,7 @@ export async function POST(req: Request) {
             amount: Math.round(amount * 100), // convert to paise
             currency: 'INR',
             receipt: `receipt_${Date.now()}`,
+            notes: notes || {}
         });
 
         return NextResponse.json({ orderId: order.id });

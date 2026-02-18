@@ -7,7 +7,6 @@ import { Send, Instagram, Twitter, Facebook, Youtube } from 'lucide-react';
 const shopLinks = [
     { name: 'All Products', href: '/shop' },
     { name: 'New Arrivals', href: '/shop' },
-    { name: 'Collections', href: '/collections' },
     { name: 'Brands', href: '/brands' },
 ];
 
@@ -19,10 +18,7 @@ const supportLinks = [
 ];
 
 const socialLinks = [
-    { icon: Instagram, href: '#', label: 'Instagram' },
-    { icon: Twitter, href: '#', label: 'Twitter' },
-    { icon: Facebook, href: '#', label: 'Facebook' },
-    { icon: Youtube, href: '#', label: 'YouTube' },
+    { icon: Instagram, href: 'https://www.instagram.com/sneakerfever.in?igsh=MXIxandyeHcxdHdt', label: 'Instagram' },
 ];
 
 export default function Footer() {

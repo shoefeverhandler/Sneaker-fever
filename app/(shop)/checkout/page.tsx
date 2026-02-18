@@ -29,7 +29,10 @@ type ShippingFormData = z.infer<typeof shippingSchema>;
 
 export default function CheckoutPage() {
     const router = useRouter();
-    const { items, totalPrice, clearCart } = useCart();
+    const { items, clearCart } = useCart();
+    // Calculate total price directly here to force reactivity and avoid 0 issue
+    const totalPrice = items.reduce((total, item) => total + (Number(item.price) * item.quantity), 0);
+
     const [isProcessing, setIsProcessing] = useState(false);
 
     // Shipping State
@@ -92,10 +95,17 @@ export default function CheckoutPage() {
         setIsProcessing(true);
         try {
             // 1. Create Order on Server
+            const finalAmount = totalPrice + (shippingRate || 0);
             const res = await fetch('/api/payment/create-order', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ amount: totalPrice }),
+                body: JSON.stringify({
+                    amount: finalAmount,
+                    notes: {
+                        shipping_amount: shippingRate || 0,
+                        subtotal: totalPrice
+                    }
+                }),
             });
 
             if (!res.ok) throw new Error('Order creation failed');
@@ -122,7 +132,8 @@ export default function CheckoutPage() {
                             orderDetails: {
                                 items: items,
                                 shippingAddress: data,
-                                totalAmount: totalPrice
+                                totalAmount: finalAmount,
+                                shippingCost: shippingRate || 0
                             }
                         }),
                     });
@@ -224,10 +235,7 @@ export default function CheckoutPage() {
                         </CardContent>
                     </Card>
 
-                    <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 p-4 rounded-lg border border-green-200">
-                        <ShieldCheck className="h-5 w-5" />
-                        <span>Ordering is 100% safe and secure. Payments processed via Razorpay.</span>
-                    </div>
+
                 </div>
 
                 {/* Right: Order Summary */}

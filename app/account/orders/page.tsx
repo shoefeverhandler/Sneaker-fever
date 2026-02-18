@@ -6,6 +6,18 @@ import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import TrackingTimeline from '@/components/order/TrackingTimeline';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 
 interface OrderItem {
     productId: string;
@@ -26,6 +38,10 @@ interface Order {
     awbCode?: string;
     courierName?: string;
     shiprocketOrderId?: number;
+    // Returns
+    updatedAt: string;
+    returnStatus?: string;
+    returnShiprocketOrderId?: number;
 }
 
 export default function OrdersPage() {
@@ -33,20 +49,21 @@ export default function OrdersPage() {
     const [loading, setLoading] = useState(true);
     const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
 
-    useEffect(() => {
-        async function fetchOrders() {
-            try {
-                const res = await fetch('/api/orders');
-                if (res.ok) {
-                    const data = await res.json();
-                    setOrders(data.orders);
-                }
-            } catch (error) {
-                console.error('Failed to fetch orders', error);
-            } finally {
-                setLoading(false);
+    async function fetchOrders() {
+        try {
+            const res = await fetch('/api/orders');
+            if (res.ok) {
+                const data = await res.json();
+                setOrders(data.orders);
             }
+        } catch (error) {
+            console.error('Failed to fetch orders', error);
+        } finally {
+            setLoading(false);
         }
+    }
+
+    useEffect(() => {
         fetchOrders();
     }, []);
 
@@ -137,8 +154,8 @@ export default function OrdersPage() {
                                     ))}
                                 </div>
 
-                                {/* Track Shipment Button & Timeline */}
-                                <div className="mt-6 pt-4 border-t">
+                                {/* Footer: Track Shipment & Return Button */}
+                                <div className="mt-6 pt-4 border-t flex flex-wrap justify-between gap-4">
                                     <Button
                                         variant="outline"
                                         size="sm"
@@ -149,21 +166,130 @@ export default function OrdersPage() {
                                         {expandedOrder === order._id ? 'Hide Tracking' : 'Track Shipment'}
                                     </Button>
 
-                                    {expandedOrder === order._id && (
-                                        <div className="mt-4 p-4 bg-gray-50 dark:bg-zinc-800/30 rounded-xl">
-                                            <TrackingTimeline
-                                                currentStatus={order.orderStatus}
-                                                courierName={order.courierName}
-                                                awbCode={order.awbCode}
-                                            />
+                                    {/* Return Button Logic */}
+                                    {order.orderStatus === 'delivered' && (!order.returnStatus || order.returnStatus === 'none') && (
+                                        <ReturnOrderDialog order={order} onReturnSuccess={fetchOrders} />
+                                    )}
+
+                                    {/* Return Status Badge */}
+                                    {order.returnStatus && order.returnStatus !== 'none' && (
+                                        <div className="flex items-center gap-2">
+                                            <Badge variant={
+                                                order.returnStatus === 'completed' ? 'default' :
+                                                    order.returnStatus === 'rejected' ? 'destructive' : 'secondary'
+                                            }>
+                                                Return: {order.returnStatus.charAt(0).toUpperCase() + order.returnStatus.slice(1)}
+                                            </Badge>
+                                            {order.returnShiprocketOrderId && (
+                                                <Button variant="link" size="sm" className="h-auto p-0 text-primary" onClick={() => window.open(`https://shiprocket.co/tracking/${order.returnShiprocketOrderId}`, '_blank')}>
+                                                    Track Return
+                                                </Button>
+                                            )}
                                         </div>
                                     )}
                                 </div>
+
+                                {/* Tracking Timeline */}
+                                {expandedOrder === order._id && (
+                                    <div className="mt-4 p-4 bg-gray-50 dark:bg-zinc-800/30 rounded-xl">
+                                        <TrackingTimeline
+                                            currentStatus={order.orderStatus}
+                                            courierName={order.courierName}
+                                            awbCode={order.awbCode}
+                                        />
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))}
                 </div>
             )}
         </div>
+    );
+}
+
+// ─── Sub-Component: Return Dialog ─────────────────────────────────
+
+function ReturnOrderDialog({ order, onReturnSuccess }: { order: Order; onReturnSuccess: () => void }) {
+    const [open, setOpen] = useState(false);
+    const [reason, setReason] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    // Calculate if within 7 days
+    const deliveryDate = new Date(order.updatedAt); // Assuming updatedAt is delivery date for now
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - deliveryDate.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const isEligible = diffDays <= 7;
+
+    if (!isEligible) return null;
+
+    const handleReturn = async () => {
+        if (!reason.trim()) {
+            toast.error('Please provide a reason for return');
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const res = await fetch('/api/orders/return', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ orderId: order._id, reason }),
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                toast.success('Return requested successfully! Review instructions in email.');
+                setOpen(false);
+                onReturnSuccess();
+            } else {
+                toast.error(data.error || 'Failed to request return');
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('Something went wrong. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button variant="destructive" size="sm">Request Return</Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Request Return</DialogTitle>
+                    <DialogDescription>
+                        Returns are accepted within 7 days of delivery. A shipping fee will be deducted from your refund.
+                    </DialogDescription>
+                </DialogHeader>
+
+                <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                        <Label>Reason for Return</Label>
+                        <Textarea
+                            placeholder="Please tell us why you want to return this item..."
+                            value={reason}
+                            onChange={(e) => setReason(e.target.value)}
+                        />
+                    </div>
+                    <div className="bg-yellow-500/10 p-3 rounded-md text-xs text-yellow-700 dark:text-yellow-400">
+                        Note: The original shipping fee will be deducted from your refund.
+                    </div>
+                </div>
+
+                <DialogFooter>
+                    <Button variant="outline" onClick={() => setOpen(false)} disabled={loading}>Cancel</Button>
+                    <Button onClick={handleReturn} disabled={loading}>
+                        {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                        Confirm Return
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     );
 }
