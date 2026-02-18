@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -32,9 +32,61 @@ export default function CheckoutPage() {
     const { items, totalPrice, clearCart } = useCart();
     const [isProcessing, setIsProcessing] = useState(false);
 
-    const { register, handleSubmit, formState: { errors } } = useForm<ShippingFormData>({
+    // Shipping State
+    const [shippingRate, setShippingRate] = useState<number | null>(null);
+    const [isCalculatingShipping, setIsCalculatingShipping] = useState(false);
+    const [shippingError, setShippingError] = useState<string | null>(null);
+
+    const { register, handleSubmit, watch, formState: { errors } } = useForm<ShippingFormData>({
         resolver: zodResolver(shippingSchema),
     });
+
+    const pincode = watch('pincode');
+
+    // Fetch Shipping Rates when Pincode changes
+    const [debouncedPincode, setDebouncedPincode] = useState(pincode);
+
+    // Debounce effect
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedPincode(pincode);
+        }, 500); // 500ms delay
+        return () => clearTimeout(handler);
+    }, [pincode]);
+
+    // Fetch Rates Effect
+    useEffect(() => {
+        if (debouncedPincode && debouncedPincode.length === 6) {
+            setIsCalculatingShipping(true);
+            setShippingError(null);
+
+            fetch('/api/shiprocket/check-serviceability', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ deliveryPincode: debouncedPincode, weight: 0.5, cod: 0 }),
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.rate !== undefined) {
+                        setShippingRate(data.rate);
+                        setShippingError(null);
+                    } else {
+                        setShippingRate(null);
+                        setShippingError(data.error || 'Shipping not available');
+                    }
+                })
+                .catch((err) => {
+                    console.error(err);
+                    setShippingRate(null);
+                    setShippingError('Failed to calculate shipping');
+                })
+                .finally(() => setIsCalculatingShipping(false));
+        } else {
+            setShippingRate(null);
+            setShippingError(null);
+        }
+    }, [debouncedPincode]);
+
 
     const onSubmit = async (data: ShippingFormData) => {
         setIsProcessing(true);
@@ -209,11 +261,19 @@ export default function CheckoutPage() {
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-gray-500">Shipping</span>
-                                    <span className="text-green-600 font-medium">Free</span>
+                                    {isCalculatingShipping ? (
+                                        <span className="text-muted-foreground animate-pulse">Calculating...</span>
+                                    ) : shippingError ? (
+                                        <span className="text-red-500 text-xs">{shippingError}</span>
+                                    ) : shippingRate !== null ? (
+                                        <span className="font-medium">₹{shippingRate}</span>
+                                    ) : (
+                                        <span className="text-muted-foreground text-xs">Enter Pincode</span>
+                                    )}
                                 </div>
                                 <div className="flex justify-between text-lg font-bold border-t pt-2 mt-2">
                                     <span>Total</span>
-                                    <span>₹{totalPrice.toLocaleString()}</span>
+                                    <span>₹{(totalPrice + (shippingRate || 0)).toLocaleString()}</span>
                                 </div>
                             </div>
 
@@ -221,7 +281,7 @@ export default function CheckoutPage() {
                                 type="submit"
                                 form="checkout-form"
                                 className="w-full h-12 text-lg rounded-full"
-                                disabled={isProcessing}
+                                disabled={isProcessing || isCalculatingShipping || (shippingRate === null && !shippingError)} // Disable if no rate unless error (allow retry?) actually blocks if no rate
                             >
                                 {isProcessing ? (
                                     <>
@@ -229,7 +289,7 @@ export default function CheckoutPage() {
                                         Processing...
                                     </>
                                 ) : (
-                                    `Pay ₹${totalPrice.toLocaleString()}`
+                                    `Pay ₹${(totalPrice + (shippingRate || 0)).toLocaleString()}`
                                 )}
                             </Button>
                         </CardContent>

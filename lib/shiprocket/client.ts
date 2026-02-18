@@ -188,6 +188,25 @@ export async function cancelShiprocketOrder(orderIds: number[]) {
 }
 
 /**
+ * Check courier serviceability and rates.
+ */
+export async function checkServiceability(
+    pickupPincode: string,
+    deliveryPincode: string,
+    weight: number,
+    cod: number // 0 or 1
+): Promise<any> {
+    const params = new URLSearchParams({
+        pickup_postcode: pickupPincode,
+        delivery_postcode: deliveryPincode,
+        weight: weight.toString(),
+        cod: cod.toString(),
+    });
+
+    return shiprocketFetch(`/courier/serviceability/?${params.toString()}`);
+}
+
+/**
  * Check if Shiprocket credentials are configured.
  */
 export function isShiprocketConfigured(): boolean {
