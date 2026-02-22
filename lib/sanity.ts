@@ -102,7 +102,11 @@ export async function getProductBySlug(slug: string): Promise<SanityProduct> {
     images,
     "brand": brand->name,
     "rating": rating,
-    "reviews": reviews
+    "reviews": reviews,
+    description,
+    features,
+    sizes,
+    colors
   }`, { slug });
 }
 
@@ -117,4 +121,22 @@ export async function getProductsByIds(ids: string[]): Promise<SanityProduct[]> 
     "brand": brand->name,
     "stock": stock
   }`, { ids });
+}
+
+export interface SanityReview {
+  _id: string;
+  userName: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
+}
+
+export async function getProductReviews(productId: string): Promise<SanityReview[]> {
+  return client.fetch(`*[_type == "review" && product._ref == $productId && isApproved == true] | order(createdAt desc) {
+    _id,
+    userName,
+    rating,
+    comment,
+    createdAt
+  }`, { productId });
 }

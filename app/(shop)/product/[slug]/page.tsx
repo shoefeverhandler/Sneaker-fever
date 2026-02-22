@@ -2,6 +2,7 @@
 
 import { useState, useEffect, use } from 'react';
 import ProductGallery from '@/components/product/ProductGallery';
+import ProductReviews from '@/components/product/ProductReviews';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
@@ -314,6 +315,9 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                     </Accordion>
                 </div>
             </div>
+
+            {/* Product Reviews Section */}
+            <ProductReviews productId={product._id} />
         </div>
     );
 }

@@ -44,6 +44,16 @@ export async function POST(req: Request) {
             etd,
         } = payload;
 
+        // Verify Webhook Token
+        const webhookToken = req.headers.get('x-api-key');
+        const expectedToken = process.env.SHIPROCKET_WEBHOOK_SECRET;
+
+        // Only enforce token check if we have one defined in our env
+        if (expectedToken && webhookToken !== expectedToken) {
+            console.error('Invalid Shiprocket Webhook Token received');
+            return NextResponse.json({ error: 'Unauthorized webhook' }, { status: 401 });
+        }
+
         if (!order_id && !awb) {
             return NextResponse.json({ error: 'Missing identifiers' }, { status: 400 });
         }
