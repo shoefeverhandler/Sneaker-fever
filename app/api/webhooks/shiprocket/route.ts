@@ -55,7 +55,9 @@ export async function POST(req: Request) {
         }
 
         if (!order_id && !awb) {
-            return NextResponse.json({ error: 'Missing identifiers' }, { status: 400 });
+            console.log('Shiprocket test webhook received:', payload);
+            // Return 200 OK for Shiprocket's test payload instead of 400 error
+            return NextResponse.json({ received: true, message: 'Test webhook successful' }, { status: 200 });
         }
 
         await dbConnect();
