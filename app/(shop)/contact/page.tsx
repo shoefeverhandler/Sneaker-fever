@@ -29,14 +29,14 @@ export default function ContactPage() {
                             <MapPin className="w-5 h-5 mt-1 text-primary" />
                             <div>
                                 <p className="font-medium">Sneaker Fever Head Office</p>
-                                <p className="text-muted-foreground">Jaipur, Rajasthan, India</p>
+                                <p className="text-muted-foreground">Agra, Uttar Pradesh, India</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-4">
                             <Mail className="w-5 h-5 text-primary" />
                             <div>
                                 <p className="font-medium">Email</p>
-                                <p className="text-muted-foreground">support@sneakerfever.store</p>
+                                <p className="text-muted-foreground">shoefever.handler@gmail.com</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-4">
@@ -44,7 +44,7 @@ export default function ContactPage() {
                             <div>
                                 <p className="font-medium">Phone</p>
                                 <p className="text-muted-foreground text-sm flex flex-col gap-1">
-                                    <span>+91 98765 43210</span>
+                                    <span>+91 63988 76943</span>
                                     <span>(For Support)</span>
                                 </p>
                             </div>
