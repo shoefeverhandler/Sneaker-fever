@@ -107,9 +107,14 @@ export default function Footer() {
                     <p className="text-background/30 text-xs">
                         © {new Date().getFullYear()} Sneaker Fever. All rights reserved.
                     </p>
-                    <div className="flex gap-6">
+                    <div className="flex flex-wrap justify-center gap-4">
                         <Link href="/privacy" className="text-xs text-background/30 hover:text-background/60 transition-colors">Privacy Policy</Link>
-                        <Link href="/terms" className="text-xs text-background/30 hover:text-background/60 transition-colors">Terms of Service</Link>
+                        <span className="text-background/30 text-xs hidden sm:inline">|</span>
+                        <Link href="/terms" className="text-xs text-background/30 hover:text-background/60 transition-colors">Terms & Conditions</Link>
+                        <span className="text-background/30 text-xs hidden sm:inline">|</span>
+                        <Link href="/returns" className="text-xs text-background/30 hover:text-background/60 transition-colors">Refund Policy</Link>
+                        <span className="text-background/30 text-xs hidden sm:inline">|</span>
+                        <Link href="/contact" className="text-xs text-background/30 hover:text-background/60 transition-colors">Contact Us</Link>
                     </div>
                 </div>
             </div>

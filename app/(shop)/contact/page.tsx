@@ -28,15 +28,15 @@ export default function ContactPage() {
                         <div className="flex items-start gap-4">
                             <MapPin className="w-5 h-5 mt-1 text-primary" />
                             <div>
-                                <p className="font-medium">Head Office</p>
-                                <p className="text-muted-foreground">123 Shoe Street, Fashion Hub<br />New Delhi, 110001</p>
+                                <p className="font-medium">Sneaker Fever Head Office</p>
+                                <p className="text-muted-foreground">Jaipur, Rajasthan, India</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-4">
                             <Mail className="w-5 h-5 text-primary" />
                             <div>
                                 <p className="font-medium">Email</p>
-                                <p className="text-muted-foreground">support@sneakerfever.com</p>
+                                <p className="text-muted-foreground">support@sneakerfever.store</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-4">
