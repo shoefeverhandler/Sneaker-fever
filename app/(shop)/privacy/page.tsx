@@ -39,7 +39,7 @@ export default function PrivacyPage() {
                 <h2 className="text-xl font-semibold text-foreground">6. Contact Us</h2>
                 <p>
                     If you have any questions about this Privacy Policy or how your data is handled, please contact us at: <br />
-                    <strong>Email:</strong> support@sneakerfever.store
+                    <strong>Email:</strong> shoefever.handler@gmail.com
                 </p>
             </div>
         </div>
