@@ -21,9 +21,11 @@ export default function TermsPage() {
                     We strive to display our products, including colors and features, as accurately as possible. However, the actual colors you see will depend on your monitor. All prices are prominently displayed and subject to change without notice. Stock availability is subject to change at any time.
                 </p>
 
-                <h2 className="text-xl font-semibold text-foreground">3. Order Acceptance & Cancellation</h2>
+                <h2 className="text-xl font-semibold text-foreground">3. Order Cancellation Policy</h2>
                 <p>
-                    Sneaker Fever reserves the right to cancel orders due to pricing errors, stock unavailability, or suspected fraudulent transactions. If we cancel an order after your credit card has been charged, we will issue a full refund to your original payment method.
+                    Customers can cancel their orders directly from the "Order History" page, but <strong>only if the order has not yet been shipped</strong>. Once an order is processed by the courier and shipped out, the cancellation option will disappear, and the order cannot be cancelled. In such cases, customers must wait for delivery and initiate a return request.
+                    <br /><br />
+                    Sneaker Fever also reserves the right to cancel orders due to pricing errors, stock unavailability, or suspected fraudulent transactions. If any order is cancelled after payment, a full refund will be issued to the original payment method.
                 </p>
 
                 <h2 className="text-xl font-semibold text-foreground">4. Limitation of Liability</h2>

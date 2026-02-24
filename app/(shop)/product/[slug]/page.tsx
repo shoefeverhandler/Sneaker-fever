@@ -227,7 +227,6 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                             <div>
                                 <div className="flex justify-between items-center mb-3">
                                     <h3 className="text-sm font-semibold uppercase tracking-wider">Size</h3>
-                                    <button className="text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground transition-colors">Size Guide</button>
                                 </div>
                                 <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
                                     {product.sizes.map((size) => (

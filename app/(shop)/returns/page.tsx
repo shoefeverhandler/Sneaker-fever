@@ -11,8 +11,8 @@ export default function ReturnsPage() {
 
                 <h2 className="text-xl font-semibold text-foreground">1. Cancellation Rules</h2>
                 <p>
-                    Orders can be cancelled before they are dispatched. If you wish to cancel an order, please contact our support team immediately.
-                    Once an order has been handed over to our shipping partner, it cannot be cancelled and must be treated as a standard return.
+                    Orders can be cancelled <strong>only before they are shipped</strong>. You can cancel your order directly from your <a href="/account/orders" className="text-primary hover:underline">Order History</a> page.
+                    Once an order has been shipped and handed over to our shipping partner, the cancellation button will be removed, and the order must be treated as a standard return upon delivery.
                 </p>
 
                 <h2 className="text-xl font-semibold text-foreground">2. Refund Eligibility & Time Window</h2>

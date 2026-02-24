@@ -154,17 +154,23 @@ export default function OrdersPage() {
                                     ))}
                                 </div>
 
-                                {/* Footer: Track Shipment & Return Button */}
                                 <div className="mt-6 pt-4 border-t flex flex-wrap justify-between gap-4">
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() =>
-                                            setExpandedOrder(expandedOrder === order._id ? null : order._id)
-                                        }
-                                    >
-                                        {expandedOrder === order._id ? 'Hide Tracking' : 'Track Shipment'}
-                                    </Button>
+                                    <div className="flex gap-3">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() =>
+                                                setExpandedOrder(expandedOrder === order._id ? null : order._id)
+                                            }
+                                        >
+                                            {expandedOrder === order._id ? 'Hide Tracking' : 'Track Shipment'}
+                                        </Button>
+
+                                        {/* Cancel Button Logic */}
+                                        {['processing', 'new'].includes(order.orderStatus) && (
+                                            <CancelOrderDialog order={order} onCancelSuccess={fetchOrders} />
+                                        )}
+                                    </div>
 
                                     {/* Return Button Logic */}
                                     {order.orderStatus === 'delivered' && (!order.returnStatus || order.returnStatus === 'none') && (
@@ -287,6 +293,65 @@ function ReturnOrderDialog({ order, onReturnSuccess }: { order: Order; onReturnS
                     <Button onClick={handleReturn} disabled={loading}>
                         {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                         Confirm Return
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+// ─── Sub-Component: Cancel Dialog ─────────────────────────────────
+
+function CancelOrderDialog({ order, onCancelSuccess }: { order: Order; onCancelSuccess: () => void }) {
+    const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    const handleCancel = async () => {
+        setLoading(true);
+        try {
+            const res = await fetch('/api/orders/cancel', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ orderId: order._id }),
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                toast.success('Order cancelled successfully.');
+                setOpen(false);
+                onCancelSuccess();
+            } else {
+                toast.error(data.error || 'Failed to cancel order');
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('Something went wrong. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button variant="destructive" size="sm">Cancel Order</Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Cancel Order</DialogTitle>
+                    <DialogDescription>
+                        Are you sure you want to cancel this order? This action cannot be undone.
+                        <br /><br />
+                        <strong>Note:</strong> Orders can only be cancelled before they are shipped. Once cancelled, your refund will be initiated to the original payment method.
+                    </DialogDescription>
+                </DialogHeader>
+
+                <DialogFooter className="mt-4">
+                    <Button variant="outline" onClick={() => setOpen(false)} disabled={loading}>No, Keep Order</Button>
+                    <Button variant="destructive" onClick={handleCancel} disabled={loading}>
+                        {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                        Yes, Cancel Order
                     </Button>
                 </DialogFooter>
             </DialogContent>
