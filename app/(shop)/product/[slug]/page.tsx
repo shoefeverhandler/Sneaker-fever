@@ -62,7 +62,17 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
         : 0;
 
     // Helper to get image URLs
-    const imageUrls = product.images?.map((img) => urlFor(img).url()) || [];
+    const baseImageUrls = product.images?.map((img) => urlFor(img).url()) || [];
+    let imageUrls = [...baseImageUrls];
+
+    // Prepend color-specific images if available
+    if (selectedColor && product.colors) {
+        const colorData = product.colors.find((c: any) => (c.name || c) === selectedColor);
+        if (colorData && colorData.images && colorData.images.length > 0) {
+            const colorImages = colorData.images.map((img: any) => urlFor(img).url());
+            imageUrls = [...colorImages, ...baseImageUrls];
+        }
+    }
 
     function handleAddToCart() {
         if (product && product.sizes && product.sizes.length > 0 && !selectedSize) {
