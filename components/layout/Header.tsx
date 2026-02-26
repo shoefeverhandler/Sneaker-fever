@@ -37,12 +37,21 @@ export default function Header() {
         <header
             className={cn(
                 'fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-background',
-                isScrolled
-                    ? 'border-b border-border/50 py-3 shadow-sm backdrop-blur-md'
-                    : 'py-4'
+                isScrolled ? 'border-b border-border/50 shadow-sm backdrop-blur-md' : ''
             )}
         >
-            <div className="container mx-auto px-4 flex items-center justify-between">
+            {/* Announcement Bar */}
+            <div className={cn(
+                "bg-foreground text-background text-xs sm:text-sm font-semibold tracking-wider text-center flex items-center justify-center transition-all duration-500 overflow-hidden",
+                isScrolled ? "h-0 opacity-0" : "h-10 opacity-100"
+            )}>
+                <p className="animate-pulse">🔥 SUPER SALE: UP TO 60% OFF ON SELECTED STYLES! 🚀</p>
+            </div>
+
+            <div className={cn(
+                "container mx-auto px-4 flex items-center justify-between transition-all duration-500",
+                isScrolled ? "py-3" : "py-4"
+            )}>
                 {/* Mobile Menu */}
                 <div className="md:hidden">
                     <Sheet>
