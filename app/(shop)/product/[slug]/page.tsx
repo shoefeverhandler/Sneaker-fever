@@ -14,11 +14,13 @@ import { useWishlist } from '@/stores/useWishlist';
 import { getProductBySlug, urlFor, type SanityProduct } from '@/lib/sanity';
 import { toast } from 'sonner';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = use(params);
     const [product, setProduct] = useState<SanityProduct | null>(null);
     const [loading, setLoading] = useState(true);
+    const router = useRouter();
 
     const addItem = useCart((s) => s.addItem);
     const wishlist = useWishlist();
@@ -74,7 +76,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
         }
     }
 
-    function handleAddToCart() {
+    function handleAddToCart(buyNow = false) {
         if (product && product.sizes && product.sizes.length > 0 && !selectedSize) {
             toast.error('Please select a size');
             return;
@@ -92,7 +94,11 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                 quantity: 1,
                 maxStock: product.stock || 10,
             });
-            toast.success(`${product.title} added to cart`);
+            if (buyNow) {
+                router.push('/checkout');
+            } else {
+                toast.success(`${product.title} added to cart`);
+            }
         }
     }
 
@@ -257,21 +263,19 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                         )}
                     </div>
 
-                    <div className="flex gap-3 pt-2">
+                    <div className="flex flex-col sm:flex-row gap-3 pt-2">
                         <Button
                             size="lg"
-                            className="w-full rounded-full text-sm font-semibold h-14"
-                            onClick={handleAddToCart}
+                            className="w-full sm:flex-1 rounded-full text-sm font-semibold h-14"
+                            onClick={() => handleAddToCart(false)}
                         >
                             Add to Cart
                         </Button>
                         <Button
                             size="lg"
                             variant="outline"
-                            className="w-full rounded-full text-sm font-semibold h-14"
-                            onClick={() => {
-                                handleAddToCart();
-                            }}
+                            className="w-full sm:flex-1 rounded-full border-foreground font-semibold h-14"
+                            onClick={() => handleAddToCart(true)}
                         >
                             Buy Now
                         </Button>

@@ -8,10 +8,24 @@ import { Plus, Minus, Trash2, ShoppingBag } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth, useClerk } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
 
 export default function CartDrawer() {
     const { items, isOpen, closeCart, updateQuantity, removeItem } = useCart();
     const totalPrice = items.reduce((total, item) => total + (Number(item.price) * item.quantity), 0);
+    const { isSignedIn } = useAuth();
+    const { openSignIn } = useClerk();
+    const router = useRouter();
+
+    function handleCheckout() {
+        closeCart();
+        if (isSignedIn) {
+            router.push('/checkout');
+        } else {
+            openSignIn({ afterSignInUrl: '/checkout', afterSignUpUrl: '/checkout' });
+        }
+    }
 
     return (
         <Sheet open={isOpen} onOpenChange={(open) => !open && closeCart()}>
@@ -113,11 +127,9 @@ export default function CartDrawer() {
                                 </div>
                             </div>
 
-                            <Link href="/checkout" onClick={() => closeCart()}>
-                                <Button className="w-full h-12 text-lg rounded-full">
-                                    Checkout
-                                </Button>
-                            </Link>
+                            <Button className="w-full h-12 text-lg rounded-full" onClick={handleCheckout}>
+                                Checkout
+                            </Button>
                         </div>
                     </SheetFooter>
                 )}

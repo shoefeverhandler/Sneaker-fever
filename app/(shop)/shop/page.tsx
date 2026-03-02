@@ -18,33 +18,19 @@ import { fadeInUp, staggerContainer } from '@/lib/animations';
 import { getProducts, getBrands, urlFor, type SanityProduct, type SanityBrand } from '@/lib/sanity';
 import { useSearchParams, useRouter } from 'next/navigation';
 
-const categories = ['Lifestyle', 'Running', 'Basketball', 'Training', 'Casual', 'Sandals', 'Slides'];
-
 function FilterSidebar({
     priceRange,
     setPriceRange,
-    selectedCategories,
-    setSelectedCategories,
     selectedBrands,
     setSelectedBrands,
     availableBrands
 }: {
     priceRange: number[];
     setPriceRange: (v: number[]) => void;
-    selectedCategories: string[];
-    setSelectedCategories: (v: string[]) => void;
     selectedBrands: string[];
     setSelectedBrands: (v: string[]) => void;
     availableBrands: SanityBrand[];
 }) {
-    const handleCategoryChange = (cat: string) => {
-        if (selectedCategories.includes(cat)) {
-            setSelectedCategories(selectedCategories.filter(c => c !== cat));
-        } else {
-            setSelectedCategories([...selectedCategories, cat]);
-        }
-    };
-
     const handleBrandChange = (brand: string) => {
         if (selectedBrands.includes(brand)) {
             setSelectedBrands(selectedBrands.filter(b => b !== brand));
@@ -55,29 +41,7 @@ function FilterSidebar({
 
     return (
         <div className="space-y-2">
-            <Accordion type="multiple" defaultValue={['categories', 'price', 'brands']} className="w-full">
-                <AccordionItem value="categories" className="border-none">
-                    <AccordionTrigger className="text-sm font-semibold uppercase tracking-wider py-3 hover:no-underline">
-                        Categories
-                    </AccordionTrigger>
-                    <AccordionContent>
-                        <div className="space-y-3 pb-2">
-                            {categories.map((cat) => (
-                                <div key={cat} className="flex items-center space-x-3">
-                                    <Checkbox
-                                        id={cat}
-                                        checked={selectedCategories.includes(cat)}
-                                        onCheckedChange={() => handleCategoryChange(cat)}
-                                    />
-                                    <label htmlFor={cat} className="text-sm font-medium leading-none cursor-pointer text-muted-foreground hover:text-foreground transition-colors">
-                                        {cat}
-                                    </label>
-                                </div>
-                            ))}
-                        </div>
-                    </AccordionContent>
-                </AccordionItem>
-
+            <Accordion type="multiple" defaultValue={['price', 'brands']} className="w-full">
                 <AccordionItem value="price" className="border-none">
                     <AccordionTrigger className="text-sm font-semibold uppercase tracking-wider py-3 hover:no-underline">
                         Price Range
@@ -85,7 +49,7 @@ function FilterSidebar({
                     <AccordionContent>
                         <div className="pb-2">
                             <Slider
-                                max={50000}
+                                max={5000}
                                 step={500}
                                 value={priceRange}
                                 onValueChange={setPriceRange}
@@ -129,7 +93,7 @@ function ShopContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
 
-    const [priceRange, setPriceRange] = useState([0, 50000]);
+    const [priceRange, setPriceRange] = useState([0, 5000]);
     const [sortBy, setSortBy] = useState('featured');
     const [allProducts, setAllProducts] = useState<SanityProduct[]>([]);
     const [availableBrands, setAvailableBrands] = useState<SanityBrand[]>([]);
@@ -176,7 +140,6 @@ function ShopContent() {
     // Filter products
     const filteredProducts = allProducts.filter((p) => {
         const matchesPrice = p.price >= priceRange[0] && p.price <= priceRange[1];
-        const matchesCategory = selectedCategories.length === 0 || (p.category && selectedCategories.includes(p.category));
         // For brands, p.brand is the name (e.g. "Nike"), but selectedBrands might be slugs or names.
         // My getProduct mapped brand->name. My brands list has names and slugs.
         // Let's assume selectedBrands contains slugs (from URL) or names (if clicked in sidebar?).
@@ -187,7 +150,7 @@ function ShopContent() {
         const productBrandSlug = availableBrands.find(b => b.name === p.brand)?.slug;
         const matchesBrand = selectedBrands.length === 0 || (productBrandSlug && selectedBrands.includes(productBrandSlug));
 
-        return matchesPrice && matchesCategory && matchesBrand;
+        return matchesPrice && matchesBrand;
     });
 
     const sortedProducts = [...filteredProducts].sort((a, b) => {
@@ -225,8 +188,6 @@ function ShopContent() {
                                     <FilterSidebar
                                         priceRange={priceRange}
                                         setPriceRange={setPriceRange}
-                                        selectedCategories={selectedCategories}
-                                        setSelectedCategories={setSelectedCategories}
                                         selectedBrands={selectedBrands}
                                         setSelectedBrands={setSelectedBrands}
                                         availableBrands={availableBrands}
@@ -263,8 +224,6 @@ function ShopContent() {
                             <FilterSidebar
                                 priceRange={priceRange}
                                 setPriceRange={setPriceRange}
-                                selectedCategories={selectedCategories}
-                                setSelectedCategories={setSelectedCategories}
                                 selectedBrands={selectedBrands}
                                 setSelectedBrands={setSelectedBrands}
                                 availableBrands={availableBrands}
@@ -294,7 +253,7 @@ function ShopContent() {
                                 variant="outline"
                                 className="rounded-full"
                                 onClick={() => {
-                                    setPriceRange([0, 50000]);
+                                    setPriceRange([0, 5000]);
                                     setSelectedCategories([]);
                                     setSelectedBrands([]);
                                     router.push('/shop');
