@@ -15,6 +15,7 @@ import { getProductBySlug, urlFor, type SanityProduct } from '@/lib/sanity';
 import { toast } from 'sonner';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useAuth, useClerk } from '@clerk/nextjs';
 
 export default function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = use(params);
@@ -24,6 +25,8 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
 
     const addItem = useCart((s) => s.addItem);
     const wishlist = useWishlist();
+    const { isSignedIn } = useAuth();
+    const { openSignIn } = useClerk();
 
     const [selectedSize, setSelectedSize] = useState<string>('');
     const [selectedColor, setSelectedColor] = useState<string>('');
@@ -95,7 +98,11 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                 maxStock: product.stock || 10,
             });
             if (buyNow) {
-                router.push('/checkout');
+                if (isSignedIn) {
+                    router.push('/checkout');
+                } else {
+                    openSignIn({ afterSignInUrl: '/checkout', afterSignUpUrl: '/checkout' });
+                }
             } else {
                 toast.success(`${product.title} added to cart`);
             }
