@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ShoppingBag, Heart, Search, Menu, User } from 'lucide-react';
+import { ShoppingBag, Heart, Search, Menu, User, Package } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useCart } from '@/stores/useCart';
 import { Button } from '@/components/ui/button';
@@ -156,7 +156,21 @@ export default function Header() {
 
                     <div className="ml-1">
                         <SignedIn>
-                            <UserButton afterSignOutUrl="/" />
+                            <UserButton>
+                                <UserButton.MenuItems>
+                                    <UserButton.Link
+                                        label="Orders"
+                                        labelIcon={<Package size={15} />}
+                                        href="/account/orders"
+                                    />
+                                    <UserButton.Link
+                                        label="Wishlist"
+                                        labelIcon={<Heart size={15} />}
+                                        href="/account/wishlist"
+                                    />
+                                    <UserButton.Action label="manageAccount" />
+                                </UserButton.MenuItems>
+                            </UserButton>
                         </SignedIn>
                         <SignedOut>
                             <SignInButton mode="modal">
