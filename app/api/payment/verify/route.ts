@@ -74,12 +74,17 @@ export async function POST(req: Request) {
                     billing_email: orderDetails.email || '',
                     billing_phone: orderDetails.shippingAddress.phone,
                     shipping_is_billing: true,
-                    order_items: orderDetails.items.map((item: any) => ({
-                        name: item.title,
-                        sku: item.productId,
-                        units: item.quantity,
-                        selling_price: item.price,
-                    })),
+                    order_items: orderDetails.items.map((item: any) => {
+                        let itemName = `${item.title} - Size: ${item.size}`;
+                        if (item.color) itemName += ` - Color: ${item.color}`;
+                        
+                        return {
+                            name: itemName,
+                            sku: item.productId,
+                            units: item.quantity,
+                            selling_price: item.price,
+                        };
+                    }),
                     payment_method: 'Prepaid',
                     sub_total: orderDetails.totalAmount,
                     length: 30,  // Default box dimensions (cm)
