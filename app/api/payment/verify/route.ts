@@ -87,9 +87,9 @@ export async function POST(req: Request) {
                     }),
                     payment_method: 'Prepaid',
                     sub_total: orderDetails.totalAmount,
-                    length: 30,  // Default box dimensions (cm)
-                    breadth: 20,
-                    height: 15,
+                    length: 25,  // Default box dimensions (cm) - Reduced to prevent high volumetric weight
+                    breadth: 15,
+                    height: 10,
                     weight: 0.8, // Default weight (kg)
                 });
 
